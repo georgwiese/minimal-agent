@@ -13,44 +13,50 @@ It is inspired by Hugging Face's Smolagents library. Smolagents' python exectuto
 
 ## Usage
 
-Clone and install:
+### Clone and Install
 
 1. Install [`uv`](https://docs.astral.sh/uv/getting-started/installation/) for Python packaging and environment creation.
 
 2. Clone the repo:
-```bash
-git clone https://github.com/yourusername/minimal-agent.git
-cd minimal-agent
-```
+   ```bash
+   git clone https://github.com/Antropath/minimal-agent.git
+   cd minimal-agent
+   ```
 
-3. The repo uses [LiteLLM](https://docs.litellm.ai/) to support a unified interface across all model providers Add the model name and the API keys/secrets of the corresponding provider. Create a `.env` file in the `minimal-agent` folder. Add the `MODEL` environment variable with name of the model as specified on LiteLLM, and he credentials for the correspoding provider. Below are two examples:
+3. Set up your model and API keys:
+   
+   The repo uses [LiteLLM](https://docs.litellm.ai/) to support a unified interface across all model providers. Create a `.env` file in the `minimal-agent` folder and add the `MODEL` environment variable with the name of the model as specified on LiteLLM, along with the credentials for the corresponding provider.
+   
+   Example for AWS Bedrock:
+   ```bash
+   # AWS Bedrock: https://docs.litellm.ai/docs/providers/bedrock
+   AWS_ACCESS_KEY_ID=<YOUR-AWS-ACCESS-KEY-ID>
+   AWS_SECRET_ACCESS_KEY=<YOUR-AWS-SECRET-ACCESS-KEY>
+   AWS_REGION_NAME=<YOUR-AWS-REGION-NAME>
 
-```bash
-# AWS Bedrock: https://docs.litellm.ai/docs/providers/bedrock
-AWS_ACCESS_KEY_ID=<YOUR-AWS-ACCESS-KEY-ID>
-AWS_SECRET_ACCESS_KEY=<YOUR-AWS-SECRET-ACCESS-KEY>
-AWS_REGION_NAME=<YOUR-AWS-REGION-NAME>
+   MODEL="bedrock/anthropic.claude-3-7-sonnet-20250219-v1:0"
+   ```
 
-MODEL="bedrock/anthropic.claude-3-7-sonnet-20250219-v1:0"
-```
+   Example for Google Gemini:
+   ```bash
+   # Google Gemini: https://docs.litellm.ai/docs/providers/gemini
+   GEMINI_API_KEY=<YOUR-API-KEY>
 
-```bash
-# Google Gemini: https://docs.litellm.ai/docs/providers/gemini
-GEMINI_API_KEY=<YOUR-API-KEY>
+   MODEL="gemini/gemini-2.0-flash"
+   ```
 
-MODEL="gemini/gemini-2.0-flash"
-```
-
-For other model providers refer to the [LiteLLM documentation](https://docs.litellm.ai/docs/providers). Note that coding agents require powerfull LLMs, such as Claude 3.7 or Gemini 2.0 Flash. While you can use this code with less powerful models, the results might not be great.
+   For other model providers, refer to the [LiteLLM documentation](https://docs.litellm.ai/docs/providers). Note that coding agents require powerful LLMs, such as Claude 3.7 or Gemini 2.0 Flash. While you can use this code with less powerful models, the results might not be great.
 
 4. Run the example:
-```bash
-uv run run_agent.py
-```
+   ```bash
+   uv run run_agent.py
+   ```
 
-The default example runs a query about "the hottest day in 2024 and the Dow Jones value on that day." and provides the agent with the ability to search the internet and visit websites to find the answer.
+### Usage Example
 
-Go ahead, try it out and modify the task in `run_agent.py`.
+The default example runs a query about "the hottest day in 2024 and the Dow Jones value on that day" and provides the agent with the ability to search the internet and visit websites to find the answer.
+
+You can modify the task in `run_agent.py`:
 ```python
 res = agent.run("<Your task here in natural language>")
 ```
