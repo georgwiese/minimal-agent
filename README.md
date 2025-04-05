@@ -1,4 +1,4 @@
-# minimalAgent
+# minimal-agent
 
 A minimalistic implementation of an LLM agent that can write actions in code to solve tasks.
 The focus of this code is on simplicity. The goal is purely educational.
