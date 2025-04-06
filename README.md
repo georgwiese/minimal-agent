@@ -1,9 +1,8 @@
 # minimal-agent
 
-A minimalistic implementation of an LLM agent that can write actions in code to solve tasks.
-The focus of this code is on simplicity and education: To show that the central idea behing LLM agents is really simple and creating one from scratch is really not rocket science with today's advanced LLMs.
+A minimalistic implementation of an LLM agent that can write actions in code to solve tasks. The focus is on simplicity and education. `minimal-agent` shows that the central idea behing LLM agents is simple. Creating one from scratch is really not rocket science with today's advanced LLMs.
 
-This focus of course implies tradeoffs. For example, there are fewer validation steps, less gracious error handling or edge cases covered than one would like to see in a full-blown production-ready library. But it pays off. The core `agent.py` module is only ~100 lines long (excluding extensive comments). 
+This focus of course implies tradeoffs. For example, there are fewer validation steps, less gracious error handling or edge cases covered than one would like to see in a full-blown production-ready library. But that's OK given the objectives mentioned above - and it pays off. The core `agent.py` module is only ~100 lines long (excluding extensive comments). 
 
 The agent itself is built from scratch using just a few libraries and extensively commented. It is, however, inspired by [Hugging Face's Smolagents library](https://github.com/huggingface/smolagents/tree/main).
 
