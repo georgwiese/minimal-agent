@@ -35,10 +35,8 @@ class Agent:
         self,
         model,
         tools=None,
-        managed_agents=None,
         authorized_imports=None,
         max_steps=10,
-        prompt_templates=None,
     ):
         self.model = model
         self.max_steps = max_steps
@@ -118,6 +116,7 @@ class Agent:
             nr_steps += 1
             if is_final_answer:
                 return output
+        return "Could not solve task: Maximum number of steps exceeded."
 
     def step(self, history: list) -> list:
         """Implement the logic for each step of the agent's decision-making process.
