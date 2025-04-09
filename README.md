@@ -42,7 +42,7 @@ The code agent needs a controlled and isolated environment to run the code it ge
    MODEL="gemini/gemini-2.0-flash"
    ```
 
-   For other model providers, refer to the [LiteLLM documentation](https://docs.litellm.ai/docs/providers). You might have to add additional dependencies for a given model provider, which are mentioned in the LiteLLM docs. You can add them using `uv add <your-python-package>`. For example, Bedrock models require `boto3`, which has already been added.
+   For other model providers, refer to the [LiteLLM documentation](https://docs.litellm.ai/docs/providers). You might have to add additional dependencies for a given model provider, which are mentioned in the LiteLLM docs. You can add them using `uv add <your-python-package>`. For example, Bedrock models require `boto3`, which has already been added. If you don't use AWS-provided models you can also remove `boto3`.
    
    Note that coding agents require powerful LLMs, such as Claude 3.7 Sonnet, Amazon Nova Pro, or Gemini 2.0 Flash. While you can use this code with less powerful models, the results might not be great.
 
