@@ -24,7 +24,7 @@ The code agent needs a controlled and isolated environment to run the code it ge
    
    The repo uses [LiteLLM](https://docs.litellm.ai/) to support a unified interface across all model providers. Create a `.env` file in the `minimal-agent` folder and add the `MODEL` environment variable with the name of the model as specified on LiteLLM, along with the credentials for the corresponding provider.
    
-   Example for AWS Bedrock:
+   Example for AWS Bedrock (*):
    ```bash
    # AWS Bedrock: https://docs.litellm.ai/docs/providers/bedrock
    AWS_ACCESS_KEY_ID=<YOUR-AWS-ACCESS-KEY-ID>
@@ -50,6 +50,8 @@ The code agent needs a controlled and isolated environment to run the code it ge
    ```bash
    uv run run_agent.py
    ```
+
+(*) Note that there are better [ways to authenticate](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html#credentials) with AWS than access keys that are also supported by LiteLLM through boto3. The method above was mentioned because it is the first one mentioned on LiteLLM and provides consistency across providers.
 
 ### Usage Example
 
