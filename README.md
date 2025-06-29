@@ -46,6 +46,11 @@ The code agent needs a controlled and isolated environment to run the code it ge
    
    Note that coding agents require powerful LLMs, such as Claude 3.7 Sonnet, Amazon Nova Pro, or Gemini 2.0 Flash. While you can use this code with less powerful models, the results might not be great.
 
+   Also, for Tavily search, you need to create a [Tavily](https://www.tavily.com/) account and get an API key. Add it to your `.env` file:
+   ```bash
+   TAVILY_API_KEY=<YOUR-TAVILY-API-KEY>
+   ```
+
 4. Run the example:
    ```bash
    uv run run_agent.py

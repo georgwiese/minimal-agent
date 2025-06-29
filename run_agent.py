@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 
 from minimal_agent.agent import Agent
-from minimal_agent.tools import DuckDuckGoSearchTool, VisitWebpageTool
+from minimal_agent.tools import VisitWebpageTool, TavilySearchTool
 
 load_dotenv()
 
@@ -12,7 +12,12 @@ if __name__ == "__main__":
     agent = Agent(
         model=os.environ.get("MODEL"),
         tools=[
-            DuckDuckGoSearchTool(max_results=10),
+            # For this tool, make sure the TAVILY_API_KEY environment variable is set.
+            # You can get a free API key at https://tavily.com.
+            TavilySearchTool(max_results=10),
+            # You can try to use the DuckDuckGoSearchTool instead, which does not require an API key,
+            # but often errors due to rate limits.
+            # DuckDuckGoSearchTool(max_results=10),
             VisitWebpageTool(max_output_length=1000),
         ],
     )
