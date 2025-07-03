@@ -14,10 +14,10 @@ if __name__ == "__main__":
         tools=[
             # For this tool, make sure the TAVILY_API_KEY environment variable is set.
             # You can get a free API key at https://tavily.com.
-            TavilySearchTool(max_results=10),
-            # You can try to use the DuckDuckGoSearchTool instead, which does not require an API key,
-            # but often errors due to rate limits.
-            # DuckDuckGoSearchTool(max_results=10),
+            # TavilySearchTool(max_results=10),
+            # You can try DuckDuckGoSearchTool as default web search tool as it doesn't require an API key,
+            # but often errors due to rate limits. If this is a problem, uncomment this tool and use Tavily above.
+            DuckDuckGoSearchTool(max_results=10),
             VisitWebpageTool(max_output_length=1000),
         ],
     )

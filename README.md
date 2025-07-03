@@ -46,7 +46,7 @@ The code agent needs a controlled and isolated environment to run the code it ge
    
    Note that coding agents require powerful LLMs, such as Claude 3.7 Sonnet, Amazon Nova Pro, or Gemini 2.0 Flash. While you can use this code with less powerful models, the results might not be great.
 
-   Also, for Tavily search, you need to create a [Tavily](https://www.tavily.com/) account and get an API key. Add it to your `.env` file:
+Note that the agent implemented in `run_agent.py` is using DuckDuckGo as default web search tool. The benefit of DuckDuckGo is that it doesn't need an API key, meaning that you can run the agent without any other setup. The drawback is that you might run into rate limits quickly. To avoid these rate limits, you can replace DuckDuckGo with [Tavily](https://www.tavily.com/) as web search too. For that, you need to replace the search tools in `run_agent.py`, create a [Tavily](https://www.tavily.com/) account, get an API key and add it to your `.env` file:
    ```bash
    TAVILY_API_KEY=<YOUR-TAVILY-API-KEY>
    ```
