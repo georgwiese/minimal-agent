@@ -1,4 +1,5 @@
 import os
+import sys
 
 from dotenv import load_dotenv
 
@@ -9,6 +10,12 @@ load_dotenv()
 
 
 if __name__ == "__main__":
+    # Get query from command line or use default
+    if len(sys.argv) > 1:
+        query = " ".join(sys.argv[1:])
+    else:
+        query = "What was the hottest day in 2024 and how much was the Dow Jones on that day?"
+    
     agent = Agent(
         model=os.environ.get("MODEL"),
         tools=[
@@ -22,9 +29,7 @@ if __name__ == "__main__":
         ],
     )
 
-    res = agent.run(
-        "What was the hottest day in 2024 and how much was the Dow Jones on that day?"
-    )
+    res = agent.run(query)
 
     print(20 * "-")
     print(f"The final answer is:\n\n{res}")
