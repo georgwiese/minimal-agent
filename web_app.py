@@ -100,7 +100,8 @@ with gr.Blocks(title="Minimal Agent Web UI") as demo:
     )
     
     with gr.Row():
-        with gr.Column():
+        # Left column for input and output
+        with gr.Column(scale=1):
             query_input = gr.Textbox(
                 label="Your Question",
                 placeholder="e.g., What was the hottest day in 2024?",
@@ -109,17 +110,17 @@ with gr.Blocks(title="Minimal Agent Web UI") as demo:
             
             submit_btn = gr.Button("Ask Agent", variant="primary")
             
-    with gr.Row():
-        with gr.Column(scale=1):
-            reasoning_steps = gr.Markdown(
-                label="Reasoning Steps",
-                value=""
-            )
-        with gr.Column(scale=2):
             output = gr.Textbox(
                 label="Final Answer",
                 lines=10,
                 max_lines=20
+            )
+            
+        # Right column for reasoning steps (takes more space)
+        with gr.Column(scale=3):
+            reasoning_steps = gr.Markdown(
+                label="Reasoning Steps",
+                value=""
             )
     
     # Examples
