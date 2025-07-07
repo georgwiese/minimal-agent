@@ -19,14 +19,46 @@ def create_agent():
     )
 
 def format_reasoning_steps(steps):
-    """Format reasoning steps as markdown."""
+    """Format reasoning steps as markdown with separate expandable sections."""
     if not steps:
         return "No reasoning steps recorded."
     
     markdown = "### Reasoning Steps:\n\n"
     for i, step in enumerate(steps, 1):
         summary = step.summary
-        markdown += f"{i}. {summary}\n"
+        
+        # Step header with summary
+        markdown += f"**Step {i}:** {summary}\n\n"
+        
+        # Expandable thought section
+        if step.thought:
+            markdown += "<details>\n"
+            markdown += "<summary>💭 Thought</summary>\n\n"
+            markdown += step.thought + "\n\n"
+            markdown += "</details>\n\n"
+        
+        # Expandable code section
+        if step.code:
+            markdown += "<details>\n"
+            markdown += "<summary>💻 Code</summary>\n\n"
+            markdown += "```python\n"
+            markdown += step.code
+            markdown += "\n```\n\n"
+            markdown += "</details>\n\n"
+        
+        # Expandable observation section
+        if step.observation:
+            markdown += "<details>\n"
+            markdown += "<summary>👁️ Observation</summary>\n\n"
+            markdown += "```\n"
+            markdown += step.observation[:1000]  # Increased limit for observations
+            if len(step.observation) > 1000:
+                markdown += "\n... (truncated)"
+            markdown += "\n```\n\n"
+            markdown += "</details>\n\n"
+        
+        markdown += "---\n\n"  # Separator between steps
+    
     return markdown
 
 def run_agent_query_streaming(query):
