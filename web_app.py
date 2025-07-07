@@ -56,8 +56,6 @@ def format_reasoning_steps(steps):
                 markdown += "\n... (truncated)"
             markdown += "\n```\n\n"
             markdown += "</details>\n\n"
-        
-        markdown += "---\n\n"  # Separator between steps
     
     return markdown
 
