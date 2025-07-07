@@ -116,7 +116,7 @@ with gr.Blocks(title="Minimal Agent Web UI") as demo:
             )
             
         # Right column for reasoning steps (takes more space)
-        with gr.Column(scale=3):
+        with gr.Column(scale=1):
             reasoning_steps = gr.Markdown(
                 label="Reasoning Steps",
                 value=format_reasoning_steps([])  # Initialize with empty steps to show placeholder
