@@ -1,5 +1,6 @@
 import logging
 import re
+from typing import NamedTuple, List, Optional
 
 from jinja2 import StrictUndefined, Template
 from litellm import completion
@@ -7,6 +8,14 @@ from smolagents.local_python_executor import LocalPythonExecutor
 
 from .prompts import SYSTEM_PROMPT
 from .tools import FinalAnswerTool
+
+
+class ReasoningStep(NamedTuple):
+    """Structured representation of a reasoning step."""
+    summary: str
+    thought: str
+    code: str
+    observation: Optional[str] = None
 
 BASE_BUILTIN_MODULES = [
     "collections",
@@ -70,8 +79,8 @@ class Agent:
         # Initially it only contains the system prompt.
         self.history = [{"role": "system", "content": self.system_prompt}]
         
-        # Track reasoning steps (summaries) for display
-        self.reasoning_steps = []
+        # Track reasoning steps (structured) for display
+        self.reasoning_steps: List[ReasoningStep] = []
 
     def _extract_python_code(self, text: str) -> None | str:
         pattern = r"```py([\s\S]*?)```"
@@ -86,6 +95,14 @@ class Agent:
         match = re.search(pattern, text)
         assert match, "Summary not found in thought text"
         return match.group(1).strip()
+    
+    def _extract_thought(self, text: str) -> str:
+        """Extract the thought from the full text."""
+        pattern = r"Thought:\s*(.+?)(?=Summary:|$)"
+        match = re.search(pattern, text, re.DOTALL)
+        if match:
+            return match.group(1).strip()
+        return ""
 
     def initialize_system_prompt(self, system_prompt_template: str) -> str:
         """Initialize the system prompt from a template. Most of the system
@@ -165,15 +182,14 @@ class Agent:
         response = completion(
             model=self.model, messages=history, stream=False, stop="<end_code>"
         )
-        thought = response.choices[0].message.content
-        self.history.append({"role": "assistant", "content": thought})
-        logging.info(f"!Thought!: {thought}")
+        full_text = response.choices[0].message.content
+        self.history.append({"role": "assistant", "content": full_text})
+        logging.info(f"!Thought!: {full_text}")
         
-        # Extract and store the summary for this step
-        summary = self._extract_summary(thought)
-        self.reasoning_steps.append(summary)
-
-        code_action = self._extract_python_code(thought)
+        # Extract components
+        thought = self._extract_thought(full_text)
+        summary = self._extract_summary(full_text)
+        code_action = self._extract_python_code(full_text)
         logging.info(f"!Code action!: {code_action}")
 
         # 2. Execute code
@@ -186,5 +202,15 @@ class Agent:
         # the LLM reacts to it in the next step. Think of it as follows:
         # The agent asked the user to execute some code. This is now done and the
         # resulting observation is now handed back to the LLM by the user.
-        observation = {"role": "user", "content": "Observation:\n" + execution_logs}
-        return is_final_answer, observation, output
+        observation_dict = {"role": "user", "content": "Observation:\n" + execution_logs}
+        
+        # Create structured step with all information
+        step = ReasoningStep(
+            summary=summary,
+            thought=thought,
+            code=code_action or "",
+            observation=execution_logs
+        )
+        self.reasoning_steps.append(step)
+        
+        return is_final_answer, observation_dict, output

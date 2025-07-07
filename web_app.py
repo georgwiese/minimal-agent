@@ -25,7 +25,8 @@ def format_reasoning_steps(steps):
     
     markdown = "### Reasoning Steps:\n\n"
     for i, step in enumerate(steps, 1):
-        markdown += f"{i}. {step}\n"
+        summary = step.summary
+        markdown += f"{i}. {summary}\n"
     return markdown
 
 def run_agent_query_streaming(query):
