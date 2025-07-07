@@ -134,10 +134,18 @@ class Agent:
         # This should never be reached, but just in case
         return "Could not solve task: Unknown error."
     
-    def run_streaming(self, task: str):
+    def get_conversation_history(self) -> List[dict]:
+        """Get the conversation history excluding system messages."""
+        return [msg for msg in self.history if msg["role"] != "system"]
+    
+    def run_streaming(self, task: str, reset_history: bool = True):
         """Run the task and yield steps as they happen."""
         # Reset reasoning steps for new task
         self.reasoning_steps = []
+        
+        # Reset history if requested (for new conversations)
+        if reset_history:
+            self.history = [{"role": "system", "content": self.system_prompt}]
         
         # Append the task to the history so that the agent can
         # pick it up.
