@@ -20,10 +20,12 @@ def create_agent():
 
 def format_reasoning_steps(steps):
     """Format reasoning steps as markdown with separate expandable sections."""
-    if not steps:
-        return "No reasoning steps recorded."
-    
     markdown = "### Reasoning Steps:\n\n"
+    
+    if not steps:
+        markdown += "*Reasoning steps will appear here as the agent works through your question...*\n\n"
+        return markdown
+    
     for i, step in enumerate(steps, 1):
         summary = step.summary
         
@@ -118,7 +120,7 @@ with gr.Blocks(title="Minimal Agent Web UI") as demo:
         with gr.Column(scale=3):
             reasoning_steps = gr.Markdown(
                 label="Reasoning Steps",
-                value=""
+                value=format_reasoning_steps([])  # Initialize with empty steps to show placeholder
             )
     
     # Examples
