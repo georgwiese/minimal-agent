@@ -18,23 +18,35 @@ def create_agent():
         tools=tools,
     )
 
+def format_reasoning_steps(steps):
+    """Format reasoning steps as markdown."""
+    if not steps:
+        return "No reasoning steps recorded."
+    
+    markdown = "### Reasoning Steps:\n\n"
+    for i, step in enumerate(steps, 1):
+        markdown += f"{i}. {step}\n"
+    return markdown
+
 def run_agent_query(query):
     """Run the agent with the given query."""
     if not query.strip():
-        return "Please enter a query."
+        return "", ""
     
     if not os.environ.get("MODEL"):
-        return "Error: MODEL environment variable not set. Please configure your .env file."
+        return "Error: MODEL environment variable not set. Please configure your .env file.", ""
     
     if not os.environ.get("TAVILY_API_KEY"):
-        return "Error: TAVILY_API_KEY environment variable not set. Please configure your .env file."
+        return "Error: TAVILY_API_KEY environment variable not set. Please configure your .env file.", ""
     
     try:
         agent = create_agent()
         result = agent.run(query)
-        return result
+        # Format reasoning steps as markdown
+        steps_markdown = format_reasoning_steps(agent.reasoning_steps)
+        return result, steps_markdown
     except Exception as e:
-        return f"Error: {str(e)}"
+        return f"Error: {str(e)}", ""
 
 # Create Gradio interface
 with gr.Blocks(title="Minimal Agent Web UI") as demo:
@@ -57,11 +69,17 @@ with gr.Blocks(title="Minimal Agent Web UI") as demo:
             submit_btn = gr.Button("Ask Agent", variant="primary")
             
     with gr.Row():
-        output = gr.Textbox(
-            label="Agent Response",
-            lines=10,
-            max_lines=20
-        )
+        with gr.Column(scale=1):
+            reasoning_steps = gr.Markdown(
+                label="Reasoning Steps",
+                value=""
+            )
+        with gr.Column(scale=2):
+            output = gr.Textbox(
+                label="Final Answer",
+                lines=10,
+                max_lines=20
+            )
     
     # Examples
     gr.Examples(
@@ -78,13 +96,13 @@ with gr.Blocks(title="Minimal Agent Web UI") as demo:
     submit_btn.click(
         fn=run_agent_query,
         inputs=query_input,
-        outputs=output
+        outputs=[output, reasoning_steps]
     )
     
     query_input.submit(
         fn=run_agent_query,
         inputs=query_input,
-        outputs=output
+        outputs=[output, reasoning_steps]
     )
 
 if __name__ == "__main__":

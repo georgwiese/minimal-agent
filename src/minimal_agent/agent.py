@@ -69,6 +69,9 @@ class Agent:
         # Track all the thoughts and observations by the agent in a list.
         # Initially it only contains the system prompt.
         self.history = [{"role": "system", "content": self.system_prompt}]
+        
+        # Track reasoning steps (summaries) for display
+        self.reasoning_steps = []
 
     def _extract_python_code(self, text: str) -> None | str:
         pattern = r"```py([\s\S]*?)```"
@@ -76,6 +79,13 @@ class Agent:
         if match:
             return match.group(1).strip()
         return None
+    
+    def _extract_summary(self, text: str) -> str:
+        """Extract the summary from the thought text."""
+        pattern = r"Summary:\s*(.+?)(?:\n|$)"
+        match = re.search(pattern, text)
+        assert match, "Summary not found in thought text"
+        return match.group(1).strip()
 
     def initialize_system_prompt(self, system_prompt_template: str) -> str:
         """Initialize the system prompt from a template. Most of the system
@@ -99,6 +109,9 @@ class Agent:
 
     def run(self, task: str) -> str:
         """Run the task and return the result."""
+        # Reset reasoning steps for new task
+        self.reasoning_steps = []
+        
         # Append the task to the history so that the agent can
         # pick it up.
         self.history.append({"role": "user", "content": f"Task: {task}"})
@@ -139,6 +152,10 @@ class Agent:
         thought = response.choices[0].message.content
         self.history.append({"role": "assistant", "content": thought})
         logging.info(f"!Thought!: {thought}")
+        
+        # Extract and store the summary for this step
+        summary = self._extract_summary(thought)
+        self.reasoning_steps.append(summary)
 
         code_action = self._extract_python_code(thought)
         logging.info(f"!Code action!: {code_action}")
