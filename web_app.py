@@ -52,11 +52,11 @@ def format_reasoning_steps(steps):
         if step.observation:
             markdown += "<details>\n"
             markdown += "<summary>👁️ Observation</summary>\n\n"
+            markdown += '<div style="max-height: 300px; overflow-y: auto; background-color: #f6f8fa; padding: 10px; border-radius: 5px;">\n\n'
             markdown += "```\n"
-            markdown += step.observation[:1000]  # Increased limit for observations
-            if len(step.observation) > 1000:
-                markdown += "\n... (truncated)"
+            markdown += step.observation
             markdown += "\n```\n\n"
+            markdown += "</div>\n"
             markdown += "</details>\n\n"
     
     return markdown
