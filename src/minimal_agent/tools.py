@@ -1,8 +1,8 @@
 class FinalAnswerTool:
     name = "final_answer"
-    description = "Provides a final answer to the given problem."
+    description = "Provides a final answer to the given problem. The answer supports full Markdown formatting including bold/italic text, lists, code blocks, tables, headers, and links."
     inputs = {
-        "answer": {"type": "any", "description": "The final answer to the problem"}
+        "answer": {"type": "any", "description": "The final answer to the problem. Can include Markdown formatting for better presentation."}
     }
     output_type = "any"
 

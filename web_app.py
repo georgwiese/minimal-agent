@@ -110,10 +110,9 @@ with gr.Blocks(title="Minimal Agent Web UI") as demo:
             
             submit_btn = gr.Button("Ask Agent", variant="primary")
             
-            output = gr.Textbox(
+            output = gr.Markdown(
                 label="Final Answer",
-                lines=10,
-                max_lines=20
+                value=""
             )
             
         # Right column for reasoning steps (takes more space)
