@@ -28,25 +28,33 @@ def format_reasoning_steps(steps):
         markdown += f"{i}. {step}\n"
     return markdown
 
-def run_agent_query(query):
-    """Run the agent with the given query."""
+def run_agent_query_streaming(query):
+    """Run the agent with the given query, streaming results."""
     if not query.strip():
-        return "", ""
+        yield "", ""
+        return
     
     if not os.environ.get("MODEL"):
-        return "Error: MODEL environment variable not set. Please configure your .env file.", ""
+        yield "Error: MODEL environment variable not set. Please configure your .env file.", ""
+        return
     
     if not os.environ.get("TAVILY_API_KEY"):
-        return "Error: TAVILY_API_KEY environment variable not set. Please configure your .env file.", ""
+        yield "Error: TAVILY_API_KEY environment variable not set. Please configure your .env file.", ""
+        return
     
     try:
         agent = create_agent()
-        result = agent.run(query)
-        # Format reasoning steps as markdown
-        steps_markdown = format_reasoning_steps(agent.reasoning_steps)
-        return result, steps_markdown
+        final_answer = ""
+        
+        # Stream results as they come
+        for update in agent.run_streaming(query):
+            steps_markdown = format_reasoning_steps(update["steps"])
+            if update["final_answer"]:
+                final_answer = update["final_answer"]
+            yield final_answer, steps_markdown
+            
     except Exception as e:
-        return f"Error: {str(e)}", ""
+        yield f"Error: {str(e)}", ""
 
 # Create Gradio interface
 with gr.Blocks(title="Minimal Agent Web UI") as demo:
@@ -94,13 +102,13 @@ with gr.Blocks(title="Minimal Agent Web UI") as demo:
     
     # Event handlers
     submit_btn.click(
-        fn=run_agent_query,
+        fn=run_agent_query_streaming,
         inputs=query_input,
         outputs=[output, reasoning_steps]
     )
     
     query_input.submit(
-        fn=run_agent_query,
+        fn=run_agent_query_streaming,
         inputs=query_input,
         outputs=[output, reasoning_steps]
     )

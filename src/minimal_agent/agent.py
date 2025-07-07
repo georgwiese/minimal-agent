@@ -109,6 +109,16 @@ class Agent:
 
     def run(self, task: str) -> str:
         """Run the task and return the result."""
+        # Use run_streaming and just get the final result
+        for update in self.run_streaming(task):
+            if update["final_answer"]:
+                return update["final_answer"]
+        
+        # This should never be reached, but just in case
+        return "Could not solve task: Unknown error."
+    
+    def run_streaming(self, task: str):
+        """Run the task and yield steps as they happen."""
         # Reset reasoning steps for new task
         self.reasoning_steps = []
         
@@ -127,9 +137,15 @@ class Agent:
             self.history.append(observation)
             logging.debug(f"!Last History entry! f{self.history[-1]}")
             nr_steps += 1
+            
+            # Yield the current state
             if is_final_answer:
-                return output
-        return "Could not solve task: Maximum number of steps exceeded."
+                yield {"final_answer": output, "steps": self.reasoning_steps}
+                return
+            else:
+                yield {"final_answer": None, "steps": self.reasoning_steps}
+                
+        yield {"final_answer": "Could not solve task: Maximum number of steps exceeded.", "steps": self.reasoning_steps}
 
     def step(self, history: list) -> list:
         """Implement the logic for each step of the agent's decision-making process.
