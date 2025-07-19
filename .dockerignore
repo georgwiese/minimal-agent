@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Logs
+*.log
+log.txt
+
+# Development
+*.db
+*.sqlite
+*.sqlite3
+
+# Documentation
+README.md
+deploy/README.md
+
+# Temporary files
+tmp/
+temp/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/

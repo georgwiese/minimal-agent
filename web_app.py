@@ -1,4 +1,5 @@
 import os
+import secrets
 import gradio as gr
 from dotenv import load_dotenv
 from minimal_agent.agent import Agent
@@ -226,9 +227,29 @@ with gr.Blocks(title="Minimal Agent Web UI") as demo:
         outputs=[output, reasoning_steps, conversation_state, query_input, conversation_display]
     )
 
+def create_gradio_interface():
+    """Create and return the Gradio interface."""
+    return demo
+
 if __name__ == "__main__":
-    demo.launch(
-        server_name="0.0.0.0",
-        server_port=7860,
-        share=False
-    )
+    # Generate or use existing token
+    token = os.environ.get("ACCESS_TOKEN")
+    if not token:
+        token = secrets.token_urlsafe(32)
+        print(f"\n{'='*60}")
+        print(f"Access token: {token}")
+        print(f"Access URL: http://localhost:7860/?token={token}")
+        print(f"{'='*60}\n")
+    
+    # Launch with authentication if token is set
+    launch_kwargs = {
+        "server_name": "0.0.0.0",
+        "server_port": 7860,
+        "share": False
+    }
+    
+    if token:
+        launch_kwargs["auth"] = lambda username, password: password == token
+        launch_kwargs["auth_message"] = "Enter the access token"
+    
+    demo.launch(**launch_kwargs)

@@ -85,3 +85,28 @@ Note that many AI agent frameworks (allow to) abstract the ReAct framework. Howe
 This can be very useful. The code in this repo might fail for several tasks precisely because this is missing.
 
 However, for educational purposes and even for more specific use cases with very narrow tasks, it's more effective to start with simpler code and tailor it to the requirements rather than adapting a more complex framework.
+
+## Deployment
+
+Deploy on Ubuntu server:
+
+```bash
+# Install Docker
+curl -fsSL https://get.docker.com | sh
+apt install docker-compose -y
+
+# Clone and setup
+git git@github.com:georgwiese/minimal-agent.git
+cd minimal-agent
+cp .env.example .env
+nano .env  # Add your API keys
+
+# Generate access token
+echo "ACCESS_TOKEN=$(openssl rand -base64 32)" >> .env
+
+# Start
+docker-compose up -d
+
+# View access URL
+docker-compose logs agent
+```
