@@ -231,25 +231,6 @@ def create_gradio_interface():
     """Create and return the Gradio interface."""
     return demo
 
-def custom_auth(username, password, request: gr.Request = None):
-    """Custom auth that checks both password and URL token."""
-    token = os.environ.get("ACCESS_TOKEN")
-    if not token:
-        return True  # No auth if no token set
-    
-    # Check if token is in URL query params
-    if request:
-        try:
-            query_params = dict(request.query_params) if hasattr(request, 'query_params') else {}
-            url_token = query_params.get("token", "")
-            # Handle URL-encoded equals sign
-            if url_token.rstrip("=") == token.rstrip("="):
-                return True
-        except Exception as e:
-            print(f"Error checking URL token: {e}", flush=True)
-    
-    # Fall back to password check
-    return password == token or password == token.rstrip("=")
 
 if __name__ == "__main__":
     # Generate or use existing token
@@ -275,26 +256,21 @@ if __name__ == "__main__":
         except:
             public_ip = "your-server-ip"
     
-    # Print the access URL with token
+    # Print the access URL
     print(f"\n{'='*60}")
     print(f"Access the web app at:")
-    print(f"  http://{public_ip}:7860/?token={token}")
+    print(f"  http://{public_ip}:7860/")
     print(f"")
-    print(f"Or login with:")
-    print(f"  Username: (anything)")
+    print(f"Login with:")
+    print(f"  Username: (leave empty)")
     print(f"  Password: {token}")
     print(f"{'='*60}\n")
     
-    # Launch with authentication if token is set
-    launch_kwargs = {
-        "server_name": "0.0.0.0",
-        "server_port": 7860,
-        "share": False
-    }
-    
-    if token:
-        # For now, use simple auth - Gradio doesn't support URL token auth well
-        launch_kwargs["auth"] = lambda u, p: p == token
-        launch_kwargs["auth_message"] = "Enter the access token (Username can be anything)"
-    
-    demo.launch(**launch_kwargs)
+
+    demo.launch(
+        server_name="0.0.0.0",
+        server_port=7860,
+        share=False,
+        auth=lambda u, p: p == token,
+        auth_message="Enter the access token"
+    )
