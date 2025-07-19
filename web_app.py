@@ -231,7 +231,7 @@ def create_gradio_interface():
     """Create and return the Gradio interface."""
     return demo
 
-def custom_auth(username, password, request: gr.Request):
+def custom_auth(username, password, request: gr.Request = None):
     """Custom auth that checks both password and URL token."""
     token = os.environ.get("ACCESS_TOKEN")
     if not token:
@@ -239,18 +239,24 @@ def custom_auth(username, password, request: gr.Request):
     
     # Check if token is in URL query params
     if request:
-        query_params = dict(request.query_params)
-        if query_params.get("token") == token:
-            return True
+        try:
+            query_params = dict(request.query_params) if hasattr(request, 'query_params') else {}
+            url_token = query_params.get("token", "")
+            # Handle URL-encoded equals sign
+            if url_token.rstrip("=") == token.rstrip("="):
+                return True
+        except Exception as e:
+            print(f"Error checking URL token: {e}", flush=True)
     
     # Fall back to password check
-    return password == token
+    return password == token or password == token.rstrip("=")
 
 if __name__ == "__main__":
     # Generate or use existing token
     token = os.environ.get("ACCESS_TOKEN")
     if not token:
-        token = secrets.token_urlsafe(32)
+        # Use hex token to avoid base64 special characters
+        token = secrets.token_hex(32)
     
     # Try to get public IP
     import socket
@@ -287,7 +293,8 @@ if __name__ == "__main__":
     }
     
     if token:
-        launch_kwargs["auth"] = custom_auth
-        launch_kwargs["auth_message"] = "Enter the access token"
+        # For now, use simple auth - Gradio doesn't support URL token auth well
+        launch_kwargs["auth"] = lambda u, p: p == token
+        launch_kwargs["auth_message"] = "Enter the access token (Username can be anything)"
     
     demo.launch(**launch_kwargs)
