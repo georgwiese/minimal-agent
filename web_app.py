@@ -231,15 +231,53 @@ def create_gradio_interface():
     """Create and return the Gradio interface."""
     return demo
 
+def custom_auth(username, password, request: gr.Request):
+    """Custom auth that checks both password and URL token."""
+    token = os.environ.get("ACCESS_TOKEN")
+    if not token:
+        return True  # No auth if no token set
+    
+    # Check if token is in URL query params
+    if request:
+        query_params = dict(request.query_params)
+        if query_params.get("token") == token:
+            return True
+    
+    # Fall back to password check
+    return password == token
+
 if __name__ == "__main__":
     # Generate or use existing token
     token = os.environ.get("ACCESS_TOKEN")
     if not token:
         token = secrets.token_urlsafe(32)
-        print(f"\n{'='*60}")
-        print(f"Access token: {token}")
-        print(f"Access URL: http://localhost:7860/?token={token}")
-        print(f"{'='*60}\n")
+    
+    # Try to get public IP
+    import socket
+    import urllib.request
+    
+    public_ip = None
+    try:
+        # Try to get public IP from external service
+        response = urllib.request.urlopen('https://api.ipify.org', timeout=2)
+        public_ip = response.read().decode('utf-8')
+    except:
+        try:
+            # Fallback to local hostname
+            hostname = socket.gethostname()
+            public_ip = socket.gethostbyname(hostname)
+        except:
+            public_ip = "your-server-ip"
+    
+    # Print the access URL with token
+    print(f"\n{'='*60}")
+    print(f"Access the web app at:")
+    print(f"  http://{public_ip}:7860/?token={token}")
+    print(f"")
+    print(f"Or login with:")
+    print(f"  Username: (anything)")
+    print(f"  Password: {token}")
+    print(f"{'='*60}\n")
     
     # Launch with authentication if token is set
     launch_kwargs = {
@@ -249,7 +287,7 @@ if __name__ == "__main__":
     }
     
     if token:
-        launch_kwargs["auth"] = lambda username, password: password == token
+        launch_kwargs["auth"] = custom_auth
         launch_kwargs["auth_message"] = "Enter the access token"
     
     demo.launch(**launch_kwargs)
