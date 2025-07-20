@@ -1,4 +1,5 @@
 import os
+import secrets
 import gradio as gr
 from dotenv import load_dotenv
 from minimal_agent.agent import Agent
@@ -226,9 +227,50 @@ with gr.Blocks(title="Minimal Agent Web UI") as demo:
         outputs=[output, reasoning_steps, conversation_state, query_input, conversation_display]
     )
 
+def create_gradio_interface():
+    """Create and return the Gradio interface."""
+    return demo
+
+
 if __name__ == "__main__":
+    # Generate or use existing token
+    token = os.environ.get("ACCESS_TOKEN")
+    if not token:
+        # Use hex token to avoid base64 special characters
+        token = secrets.token_hex(32)
+    
+    # Try to get public IP
+    import socket
+    import urllib.request
+    
+    public_ip = None
+    try:
+        # Try to get public IP from external service
+        response = urllib.request.urlopen('https://api.ipify.org', timeout=2)
+        public_ip = response.read().decode('utf-8')
+    except:
+        try:
+            # Fallback to local hostname
+            hostname = socket.gethostname()
+            public_ip = socket.gethostbyname(hostname)
+        except:
+            public_ip = "your-server-ip"
+    
+    # Print the access URL
+    print(f"\n{'='*60}")
+    print(f"Access the web app at:")
+    print(f"  http://{public_ip}:7860/")
+    print(f"")
+    print(f"Login with:")
+    print(f"  Username: (leave empty)")
+    print(f"  Password: {token}")
+    print(f"{'='*60}\n")
+    
+
     demo.launch(
         server_name="0.0.0.0",
         server_port=7860,
-        share=False
+        share=False,
+        auth=lambda u, p: p == token,
+        auth_message="Enter the access token"
     )

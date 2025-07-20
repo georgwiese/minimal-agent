@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  agent:
+    build: .
+    ports:
+      - "7860:7860"
+    env_file: .env
+    environment:
+      - ACCESS_TOKEN=${ACCESS_TOKEN:-}
+    restart: unless-stopped
